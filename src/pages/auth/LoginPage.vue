@@ -27,7 +27,7 @@
             <div class="row">
               <div class="col-sm-10 offset-sm-1">
                 <q-input
-                  v-model="email"
+                  v-model="field.email"
                   label="メールアドレス"
                   color="primary"
                   type="email"
@@ -37,7 +37,7 @@
             <div class="row">
               <div class="col-sm-10 offset-sm-1">
                 <q-input
-                  v-model="password"
+                  v-model="field.password"
                   label="パスワード"
                   color="primary"
                   type="password"
@@ -71,12 +71,23 @@
 // import { Todo, Meta } from 'components/models';
 // import ExampleComponent from 'components/ExampleComponent.vue';
 import { ref } from 'vue';
+import { useAuthStore } from '../../stores/authStore';
+import { useRouter } from 'vue-router';
 
-const email = ref('');
-const password = ref('');
+interface Field {
+  email: string;
+  password: string;
+}
+const field = ref<Field>({
+  email: '',
+  password: '',
+});
+const store = useAuthStore();
+const router = useRouter();
 const handleOnClick = () => {
-  alert(email, password);
+  store.login(field.value.email, field.value.password);
 };
+router.push('/');
 </script>
 
 <style lang="sass" scoped>
