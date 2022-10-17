@@ -38,7 +38,7 @@ api.interceptors.response.use(
       return;
     }
     const status = err.response.status;
-    if (status === 400) {
+    if (status === 401) {
       // ステータスが「Unauthorized」の場合は、セッションストレージをクリアしてログインへ遷移
       sessionStorage.clear();
       // router.push('/login');
