@@ -68,11 +68,8 @@
 </template>
 
 <script setup lang="ts">
-// import { Todo, Meta } from 'components/models';
-// import ExampleComponent from 'components/ExampleComponent.vue';
 import { ref } from 'vue';
 import { useAuthStore } from '../../stores/authStore';
-import { useRouter } from 'vue-router';
 
 interface Field {
   email: string;
@@ -83,11 +80,9 @@ const field = ref<Field>({
   password: '',
 });
 const store = useAuthStore();
-const router = useRouter();
 const handleOnClick = () => {
   store.login(field.value.email, field.value.password);
 };
-router.push('/');
 </script>
 
 <style lang="sass" scoped>

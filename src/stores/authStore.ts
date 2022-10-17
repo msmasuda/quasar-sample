@@ -14,7 +14,13 @@ export const useAuthStore = defineStore('auth', {
         email: email,
         password: password,
       });
-      this.user = user.data;
+      debugger;
+      const { token } = user.data;
+      if (!token) {
+        return;
+      }
+      sessionStorage.setItem('Authorization', user.data.data);
+      this.router.push('/home');
     },
   },
 });
