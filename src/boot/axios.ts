@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-// import router from '../router';
+import route from '../router/index';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -21,33 +21,7 @@ const api = axios.create({
   },
 });
 
-// リクエストヘッダーに、tokenをセットする
-if (sessionStorage.getItem('Authorization')) {
-  api.defaults.headers.common.Authorization = `Bearer ${sessionStorage.getItem(
-    'Authorization'
-  )}`;
-}
-
-// レスポンス受信後の処理
-api.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response;
-  },
-  (err: AxiosError) => {
-    if (!err.response) {
-      return;
-    }
-    const status = err.response.status;
-    if (status === 401) {
-      // ステータスが「Unauthorized」の場合は、セッションストレージをクリアしてログインへ遷移
-      sessionStorage.clear();
-      // router.push('/login');
-      return;
-    }
-  }
-);
-
-export default boot(({ app }) => {
+export default boot(({ app, router }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;
@@ -57,6 +31,58 @@ export default boot(({ app }) => {
   app.config.globalProperties.$api = api;
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
+
+  api.interceptors.request.use(
+    (config) => {
+      debugger;
+      // do something before request is sent
+      // リクエストヘッダーに、tokenをセットする
+      if (sessionStorage.getItem('Authorization')) {
+        config.headers.common.Authorization = `Bearer ${sessionStorage.getItem(
+          'Authorization'
+        )}`;
+      }
+      // if (store.getters.token) {
+      // const tokens = getAll()
+      // config.headers['access-token'] = tokens['TokenKey'];
+      // config.headers['client'] = tokens['ClientKey'];
+      // config.headers['uid'] = tokens['UidKey'];
+      // }
+      return config;
+    },
+    (error) => {
+      // do something with request error
+      console.log(error); // for debug
+      return Promise.reject(error);
+    }
+  );
+
+  // リクエストヘッダーに、tokenをセットする
+  // if (sessionStorage.getItem('Authorization')) {
+  //   api.defaults.headers.common.Authorization = `Bearer ${sessionStorage.getItem(
+  //     'Authorization'
+  //   )}`;
+  // }
+
+  // レスポンス受信後の処理
+  api.interceptors.response.use(
+    (response: AxiosResponse) => {
+      return response;
+    },
+    (err: AxiosError) => {
+      if (!err.response) {
+        return;
+      }
+      debugger;
+      const status = err.response.status;
+      if (status === 401) {
+        // ステータスが「Unauthorized」の場合は、セッションストレージをクリアしてログインへ遷移
+        sessionStorage.clear();
+        router.push({ path: '/login' });
+        return;
+      }
+    }
+  );
 });
 
 export { api };

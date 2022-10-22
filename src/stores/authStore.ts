@@ -14,13 +14,16 @@ export const useAuthStore = defineStore('auth', {
         email: email,
         password: password,
       });
-      debugger;
-      const { token } = user.data;
-      if (!token) {
-        return;
+      if (user) {
+        const { token } = user.data;
+        if (!token) return;
+        sessionStorage.setItem('Authorization', token);
+        this.router.push({ path: '/home' });
       }
-      sessionStorage.setItem('Authorization', user.data.data);
-      this.router.push('/home');
+    },
+    logout() {
+      sessionStorage.clear();
+      this.router.push({ path: '/login' });
     },
   },
 });
