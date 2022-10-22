@@ -32,30 +32,22 @@ export default boot(({ app, router }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 
-  api.interceptors.request.use(
-    (config) => {
-      debugger;
-      // do something before request is sent
-      // リクエストヘッダーに、tokenをセットする
-      if (sessionStorage.getItem('Authorization')) {
-        config.headers.common.Authorization = `Bearer ${sessionStorage.getItem(
-          'Authorization'
-        )}`;
-      }
-      // if (store.getters.token) {
-      // const tokens = getAll()
-      // config.headers['access-token'] = tokens['TokenKey'];
-      // config.headers['client'] = tokens['ClientKey'];
-      // config.headers['uid'] = tokens['UidKey'];
-      // }
-      return config;
-    },
-    (error) => {
-      // do something with request error
-      console.log(error); // for debug
-      return Promise.reject(error);
+  api.interceptors.request.use((config) => {
+    // do something before request is sent
+    // リクエストヘッダーに、tokenをセットする
+    if (sessionStorage.getItem('Authorization')) {
+      config.headers.common.Authorization = `Bearer ${sessionStorage.getItem(
+        'Authorization'
+      )}`;
     }
-  );
+    // if (store.getters.token) {
+    // const tokens = getAll()
+    // config.headers['access-token'] = tokens['TokenKey'];
+    // config.headers['client'] = tokens['ClientKey'];
+    // config.headers['uid'] = tokens['UidKey'];
+    // }
+    return config;
+  });
 
   // リクエストヘッダーに、tokenをセットする
   // if (sessionStorage.getItem('Authorization')) {
@@ -73,7 +65,6 @@ export default boot(({ app, router }) => {
       if (!err.response) {
         return;
       }
-      debugger;
       const status = err.response.status;
       if (status === 401) {
         // ステータスが「Unauthorized」の場合は、セッションストレージをクリアしてログインへ遷移
