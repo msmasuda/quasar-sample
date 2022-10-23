@@ -68,8 +68,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '../../stores/authStore';
+import { useMessageStore } from '../../stores/messageStore';
+import { useQuasar } from 'quasar';
 
 interface Field {
   email: string;
@@ -79,10 +81,24 @@ const field = ref<Field>({
   email: '',
   password: '',
 });
-const store = useAuthStore();
+const authStore = useAuthStore();
+const messageStore = useMessageStore();
+const $q = useQuasar();
+
 const handleOnClick = () => {
-  store.login(field.value.email, field.value.password);
+  authStore.login(field.value.email, field.value.password);
 };
+const message = computed(() => messageStore.getMessage);
+watch(message, (message: string) => {
+  if (message) {
+    $q.notify({
+      message: message,
+      icon: 'announcement',
+      position: 'center',
+    });
+    messageStore.setMessage('');
+  }
+});
 </script>
 
 <style lang="sass" scoped>

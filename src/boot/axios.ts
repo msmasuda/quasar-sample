@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import route from '../router/index';
+import { useMessageStore } from '../stores/messageStore';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -65,6 +65,13 @@ export default boot(({ app, router }) => {
       if (!err.response) {
         return;
       }
+      let message;
+      if (err.response.data) {
+        message = err.response.data.message;
+      }
+      const store = useMessageStore();
+      store.setMessage(message);
+
       const status = err.response.status;
       if (status === 401) {
         // ステータスが「Unauthorized」の場合は、セッションストレージをクリアしてログインへ遷移

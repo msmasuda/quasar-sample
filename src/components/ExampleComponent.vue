@@ -16,13 +16,13 @@
 import { computed, ref } from 'vue';
 import { Todo, Meta } from './models';
 
-interface Props {
+type PropsType = {
   title: string;
   todos?: Todo[];
   meta: Meta;
   active: boolean;
-}
-const props = withDefaults(defineProps<Props>(), {
+};
+const props = withDefaults(defineProps<PropsType>(), {
   todos: () => [],
 });
 
@@ -33,5 +33,4 @@ function increment() {
 }
 
 const todoCount = computed(() => props.todos.length);
-
 </script>
